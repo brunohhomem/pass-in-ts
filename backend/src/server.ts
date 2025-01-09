@@ -1,4 +1,5 @@
 import fastify from 'fastify'
+import fastifyCors from '@fastify/cors'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
 import {
@@ -15,6 +16,10 @@ import { getEventAttendees } from './routes/get-event-attendees'
 import { errorHandler } from './routes/_errors/error-handler'
 
 const app = fastify()
+
+app.register(fastifyCors, {
+  origin: '*'
+})
 
 // Add schema validator and serializer
 app.setValidatorCompiler(validatorCompiler)
@@ -46,6 +51,6 @@ app.register(checkIn)
 
 app.setErrorHandler(errorHandler)
 
-app.listen({ port: 3333 }).then(() => {
+app.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
   console.log('HTTP server running...')
 })
