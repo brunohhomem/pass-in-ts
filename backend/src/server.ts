@@ -1,7 +1,10 @@
 import fastify from 'fastify'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 import {
   serializerCompiler,
-  validatorCompiler
+  validatorCompiler,
+  jsonSchemaTransform
 } from 'fastify-type-provider-zod'
 import { createEvent } from './routes/create-event'
 import { registerForEvent } from './routes/register-for-event'
@@ -15,6 +18,23 @@ const app = fastify()
 // Add schema validator and serializer
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
+
+app.register(fastifySwagger, {
+  swagger: {
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    info: {
+      title: 'pass.in',
+      description: 'Especificações da API do pass.in',
+      version: '1.0.0'
+    }
+  },
+  transform: jsonSchemaTransform
+})
+
+app.register(fastifySwaggerUi, {
+  routePrefix: '/docs'
+})
 
 app.register(createEvent)
 app.register(registerForEvent)
